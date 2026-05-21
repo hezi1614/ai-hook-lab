@@ -59,6 +59,29 @@ describe("AiHookLabApp", () => {
     });
   });
 
+  it("keeps a visible regenerate action after results are rendered", async () => {
+    const user = userEvent.setup();
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({ results: [generatedHook] }),
+    });
+    vi.stubGlobal("fetch", fetchMock);
+
+    render(<AiHookLabApp />);
+
+    await user.type(screen.getByRole("textbox"), "creator growth");
+    await user.click(screen.getByRole("button", { name: /生成 10 个 Hook/ }));
+
+    expect(await screen.findByText(generatedHook.hook)).toBeInTheDocument();
+
+    const regenerateButton = screen.getByRole("button", { name: "Regenerate hooks" });
+    expect(regenerateButton).toBeEnabled();
+
+    await user.click(regenerateButton);
+
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+  });
+
   it("shows the configured API key error returned by the server", async () => {
     const user = userEvent.setup();
     vi.stubGlobal(

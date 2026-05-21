@@ -1,6 +1,6 @@
 "use client";
 
-import { Clock3, Heart, Sparkles } from "lucide-react";
+import { Clock3, Heart, RefreshCw, Sparkles } from "lucide-react";
 import dynamic from "next/dynamic";
 import { useMemo, useState } from "react";
 import { EmptyState } from "./empty-state";
@@ -244,9 +244,23 @@ export function AiHookLabApp() {
               <p className="text-sm font-medium text-neutral-500">Results</p>
               <h2 className="text-2xl font-semibold text-neutral-950">Hook Studio</h2>
             </div>
-            <span className="rounded-full border border-neutral-200 bg-white px-3 py-1 text-sm font-semibold text-neutral-600">
-              {resultCountLabel}
-            </span>
+            <div className="flex flex-wrap items-center gap-2">
+              {results.length > 0 ? (
+                <button
+                  type="button"
+                  aria-label="Regenerate hooks"
+                  onClick={handleGenerate}
+                  disabled={topic.trim().length === 0 || isGenerating}
+                  className="flex h-10 items-center justify-center gap-2 rounded-lg bg-neutral-950 px-3 text-sm font-semibold text-white transition hover:bg-neutral-800 disabled:cursor-not-allowed disabled:bg-neutral-300 disabled:text-neutral-500"
+                >
+                  <RefreshCw className="h-4 w-4" aria-hidden="true" />
+                  {isGenerating ? "生成中" : "再次生成"}
+                </button>
+              ) : null}
+              <span className="rounded-full border border-neutral-200 bg-white px-3 py-1 text-sm font-semibold text-neutral-600">
+                {resultCountLabel}
+              </span>
+            </div>
           </div>
 
           {isGenerating ? <ResultSkeletons /> : null}
