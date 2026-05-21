@@ -3,6 +3,13 @@
 import { WandSparkles } from "lucide-react";
 import { CONTENT_TYPES, PLATFORMS, type ContentType, type Platform } from "../lib/types";
 
+type TopicSample = {
+  label: string;
+  topic: string;
+  platform: Platform;
+  contentType: ContentType;
+};
+
 type GeneratorFormProps = {
   topic: string;
   platform: Platform;
@@ -14,6 +21,27 @@ type GeneratorFormProps = {
   onContentTypeChange: (contentType: ContentType) => void;
   onGenerate: () => void;
 };
+
+const TOPIC_SAMPLES: TopicSample[] = [
+  {
+    label: "新手自媒体",
+    topic: "普通人如何开始做自媒体",
+    platform: PLATFORMS[0],
+    contentType: CONTENT_TYPES[1],
+  },
+  {
+    label: "AI工具推荐",
+    topic: "3个适合新手的AI效率工具",
+    platform: PLATFORMS[2],
+    contentType: CONTENT_TYPES[3],
+  },
+  {
+    label: "副业避坑",
+    topic: "普通人做副业最容易踩的坑",
+    platform: PLATFORMS[1],
+    contentType: CONTENT_TYPES[4],
+  },
+];
 
 export function GeneratorForm({
   topic,
@@ -27,6 +55,12 @@ export function GeneratorForm({
   onGenerate,
 }: GeneratorFormProps) {
   const canGenerate = topic.trim().length > 0 && !isGenerating;
+
+  function applySample(sample: TopicSample) {
+    onTopicChange(sample.topic);
+    onPlatformChange(sample.platform);
+    onContentTypeChange(sample.contentType);
+  }
 
   return (
     <form
@@ -50,6 +84,18 @@ export function GeneratorForm({
           placeholder="例如：普通人如何开始做自媒体"
           className="min-h-28 w-full resize-none rounded-lg border border-neutral-200 bg-white px-4 py-3 text-base leading-7 text-neutral-950 outline-none transition focus:border-neutral-950 focus:ring-4 focus:ring-lime-200/70"
         />
+        <div className="flex flex-wrap gap-2">
+          {TOPIC_SAMPLES.map((sample) => (
+            <button
+              key={sample.label}
+              type="button"
+              onClick={() => applySample(sample)}
+              className="h-8 rounded-lg border border-neutral-200 bg-neutral-50 px-3 text-xs font-semibold text-neutral-700 transition hover:border-neutral-950 hover:bg-white hover:text-neutral-950"
+            >
+              {sample.label}
+            </button>
+          ))}
+        </div>
       </div>
 
       <fieldset className="space-y-2">

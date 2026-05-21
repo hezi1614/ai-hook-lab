@@ -59,6 +59,31 @@ describe("AiHookLabApp", () => {
     });
   });
 
+  it("applies a sample topic with its platform and content type", async () => {
+    const user = userEvent.setup();
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({ results: [generatedHook] }),
+    });
+    vi.stubGlobal("fetch", fetchMock);
+
+    render(<AiHookLabApp />);
+
+    await user.click(screen.getByRole("button", { name: "AI工具推荐" }));
+
+    expect(screen.getByLabelText("主题")).toHaveValue("3个适合新手的AI效率工具");
+    expect(screen.getByRole("button", { name: "B站" })).toHaveAttribute("aria-pressed", "true");
+    expect(screen.getByRole("button", { name: "教程" })).toHaveAttribute("aria-pressed", "true");
+
+    await user.click(screen.getByRole("button", { name: /生成 10 个 Hook/ }));
+
+    expect(JSON.parse(fetchMock.mock.calls[0][1].body)).toMatchObject({
+      topic: "3个适合新手的AI效率工具",
+      platform: "B站",
+      contentType: "教程",
+    });
+  });
+
   it("keeps a visible regenerate action after results are rendered", async () => {
     const user = userEvent.setup();
     const fetchMock = vi.fn().mockResolvedValue({
